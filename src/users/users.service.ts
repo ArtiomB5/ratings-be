@@ -1,26 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocument } from './user.schema';
+import { Model } from 'mongoose';
+import { HashService } from './hash.service';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(@InjectModel(User.name) private userModel: Model < UserDocument > , private hashService: HashService) {}
+  
+  async getUserByUsername(username: string) {
+    return this.userModel.findOne({
+        username
+      })
+      .exec();
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
+  async registerUser(createUserDto: CreateUserDto) {
+    // validate DTO
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    const createUser = new this.userModel(createUserDto);
+    // check if user exists
+    const user = await this.getUserByUsername(createUser.username);
+    if (user) {
+      throw new BadRequestException();
+    }
+    // Hash Password
+    createUser.password = await this.hashService.hashPassword(createUser.password);
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return createUser.save();
   }
 }

@@ -3,7 +3,7 @@ import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Question } from './question.schema';
+import { Question } from './schema/question.schema';
 
 @Controller('questions')
 @ApiTags('questions')
