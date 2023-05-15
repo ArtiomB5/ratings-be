@@ -10,12 +10,16 @@ import {
 } from '@nestjs/common';
 import { TopPageModel } from './top-page.model/top-page.model';
 import { TopPageDto } from './dto/find-top-page.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('category')
 export class TopPageController {
+  constructor(private readonly configService: ConfigService) {}
+
   @Post('create')
   async create(@Body() dto: Omit<TopPageModel, '_id'>) {
     console.log('category-create', dto);
+    console.log('category-create', this.configService.get('TEST'));
   }
 
   @Get(':id')
