@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-// import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { TopPageModule } from './top-page/top-page.module';
-import { CategoryModule } from './category/category.module';
-import { CommentModule } from './comment/comment.module';
 import { ConfigModule } from '@nestjs/config';
+import { ProductModule } from './product/product.module';
+import { ReviewModule } from './review/review.module';
+// import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -16,8 +16,8 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot(),
     AuthModule,
     TopPageModule,
-    CategoryModule,
-    CommentModule,
+    ProductModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

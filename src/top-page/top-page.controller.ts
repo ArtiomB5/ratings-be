@@ -9,17 +9,15 @@ import {
   Post,
 } from '@nestjs/common';
 import { TopPageModel } from './top-page.model/top-page.model';
-import { TopPageDto } from './dto/find-top-page.dto';
+import { FindTopPageDto } from './dto/find-top-page.dto';
 import { ConfigService } from '@nestjs/config';
 
-@Controller('category')
+@Controller('topPage')
 export class TopPageController {
-  constructor(private readonly configService: ConfigService) {}
 
   @Post('create')
   async create(@Body() dto: Omit<TopPageModel, '_id'>) {
     console.log('category-create', dto);
-    console.log('category-create', this.configService.get('TEST'));
   }
 
   @Get(':id')
@@ -43,7 +41,7 @@ export class TopPageController {
 
   @HttpCode(200)
   @Post()
-  async find(@Body() dto: TopPageDto) {
+  async find(@Body() dto: FindTopPageDto) {
     console.log('category-find', dto);
   }
 }
