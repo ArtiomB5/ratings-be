@@ -9,6 +9,7 @@ export class TopPageModel {
   _id: string;
   firstCategory: TopLevelCategory;
   secondCategory: string;
+  alias: string;
   title: string;
   category: string;
   hh?: {
@@ -20,8 +21,8 @@ export class TopPageModel {
   advantages: {
     title: string;
     description: string;
-  };
+  }[];
   seoText: string;
   tagsTitle: string;
-  tags: string;
+  tags: string[];
 }
