@@ -16,4 +16,8 @@ export class CreateReviewDto {
   @IsNumber()
   @IsNotEmpty()
   rating: number;
+
+  @IsString()
+  @IsNotEmpty()
+  productId: string;
 }
