@@ -61,18 +61,40 @@ export class ReviewController {
     @Param('productId') productId: string,
   ) {
     try {
-      const existingReview = await this.reviewService.findReviewByProductId(
+      const existingReviews = await this.reviewService.findReviewsByProductId(
         productId,
       );
       return response.status(HttpStatus.OK).json({
         statusCode: 200,
-        message: 'Review found successfully!',
-        existingReview,
+        message: CONSTANTS.REVIEW_GET_OK,
+        existingReviews,
       });
     } catch (error) {
       return response.status(HttpStatus.NOT_FOUND).json({
         statusCode: 404,
         message: CONSTANTS.REVIEW_COMMON_NOT_FOUND,
+        error,
+      });
+    }
+  }
+
+  @Delete('byProduct/:productId')
+  async deleteManyReviewsByProductId(
+    @Res() response,
+    @Param('productId') productId: string,
+  ) {
+    try {
+      const { deletedCount } =
+        await this.reviewService.deleteManyReviewsByProductId(productId);
+      return response.status(HttpStatus.OK).json({
+        statusCode: 200,
+        message: CONSTANTS.REVIEWS_DELETE_OK,
+        deletedCount,
+      });
+    } catch (error) {
+      return response.status(HttpStatus.NOT_FOUND).json({
+        statusCode: 404,
+        message: CONSTANTS.REVIEWS_NOT_FOUND,
         error,
       });
     }
