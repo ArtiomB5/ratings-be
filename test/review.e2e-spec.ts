@@ -7,48 +7,61 @@ import { Types, disconnect } from 'mongoose';
 
 const productId = new Types.ObjectId().toHexString();
 
-// Create a test dto object
-const testDto: CreateReviewDto = {
-  name: 'test',
-  title: 'test title',
-  description: 'test description',
-  rating: 5,
-  productId,
+const getTestDto = (productId: string): CreateReviewDto => {
+  const rating = Math.ceil(Math.random() * 5);
+  const textContent = new Date().toString();
+  return {
+    name: textContent,
+    title: textContent,
+    description: textContent,
+    rating,
+    productId,
+  };
 };
 
-// Describe the AppController (e2e)
-describe('AppController (e2e)', () => {
-  // Create a Nest application using the module fixture
+describe('Reviews (e2e)', () => {
   let app: INestApplication;
-  let createdId: string;
+  let createdId: string[];
 
-  // Create a test module that contains the AppModule
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    // Create a Nest application using the module fixture
     app = moduleFixture.createNestApplication();
-    // Initialize the application
     await app.init();
-  }, 5000);
+  });
 
-  // Test the root path
-  it('/review/create (POST)', async (done) => {
-    // Make a GET request to the root path
-    return (
-      request(app.getHttpServer())
-        .get('/review/create')
-        .send(testDto)
-        // Expect a 200 response code
-        .expect(201)
-        .then(({ body }: request.Response) => {
-          createdId = body.id;
-          expect(createdId).toBeDefined();
-          done();
-        })
-    );
+  it('/review/create (POST)', async () => {
+    const resp1 = await request(app.getHttpServer())
+      .post('/review/create')
+      .send(getTestDto(productId))
+      .expect(201);
+    const resp2 = await request(app.getHttpServer())
+      .post('/review/create')
+      .send(getTestDto(productId))
+      .expect(201);
+
+    createdId = [resp1.body.newReview._id, resp2.body.newReview._id];
+
+    expect(createdId).toBeDefined();
+    expect(createdId.length).toBe(2);
+  });
+
+  it('/review/byProduct/:productId (GET)', async () => {
+    const { body } = await request(app.getHttpServer())
+      .get('/review/byProduct/' + productId)
+      .expect(200);
+    const reviewsArrayLength = body.existingReviews.length;
+    expect(reviewsArrayLength).toBeGreaterThan(0);
+  });
+
+  it('/review/:id (DELETE)', async () => {
+    const { body } = await request(app.getHttpServer())
+      .delete('/review/' + createdId[0])
+      .expect(200);
+    const deletedReviewId = body.deletedReview._id;
+    expect(deletedReviewId).toBe(createdId[0]);
   });
 
   afterAll(() => {
